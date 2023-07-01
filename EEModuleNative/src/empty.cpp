@@ -1,5 +1,5 @@
 //
-// Created by ByteDance on 2023/5/28.
+// Created by antymistor on 2023/5/28.
 //
 //#include "libavcodec/avcodec.h"
 #include <thread>

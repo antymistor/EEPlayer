@@ -1,5 +1,5 @@
 //
-// Created by ByteDance on 2023/6/9.
+// Created by antymistor on 2023/6/9.
 //
 
 #ifndef CVTEXTREADER_EEGLPROGRAM_H

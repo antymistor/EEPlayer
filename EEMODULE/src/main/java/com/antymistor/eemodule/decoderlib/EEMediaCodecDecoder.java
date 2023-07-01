@@ -10,9 +10,9 @@ import androidx.annotation.Keep;
 import com.antymistor.eemodule.base.EEReturnCode;
 import java.nio.ByteBuffer;
 /**
- * Created by aizhiqiang on 2023/6/2
+ * Created by antymistor on 2023/6/2
  *
- * @author aizhiqiang@bytedance.com
+ * @author azq2018@zju.edu.cn.com
  */
 @Keep
 public class EEMediaCodecDecoder {

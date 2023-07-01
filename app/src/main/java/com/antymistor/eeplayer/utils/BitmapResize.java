@@ -4,9 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
 /**
- * Created by aizhiqiang on 2023/6/23
+ * Created by antymistor on 2023/6/23
  *
- * @author aizhiqiang@bytedance.com
+ * @author azq2018@zju.edu.cn.com
  */
 public class BitmapResize {
     public static Bitmap BitmapCut(Bitmap src , int destW , int destH){

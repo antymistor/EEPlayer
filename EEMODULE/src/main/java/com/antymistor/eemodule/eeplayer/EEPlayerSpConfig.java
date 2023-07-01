@@ -1,9 +1,9 @@
 package com.antymistor.eemodule.eeplayer;
 
 /**
- * Created by aizhiqiang on 2023/6/27
+ * Created by antymistor on 2023/6/27
  *
- * @author aizhiqiang@bytedance.com
+ * @author azq2018@zju.edu.cn.com
  */
 public class EEPlayerSpConfig {
     public static int ENABLE_BLURR_BACKGROUND_DISPLAY  = 0x01;

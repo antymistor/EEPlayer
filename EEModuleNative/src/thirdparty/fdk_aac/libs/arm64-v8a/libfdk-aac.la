@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/Users/bytedance/Documents/WorkSpace/fdk-aac-2.0.2/FDKAAC-android-build/armv8-a/lib'
+libdir='/Users/antymistor/Documents/WorkSpace/fdk-aac-2.0.2/FDKAAC-android-build/armv8-a/lib'

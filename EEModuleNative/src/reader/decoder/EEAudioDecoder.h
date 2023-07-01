@@ -1,5 +1,5 @@
 //
-// Created by ByteDance on 2023/6/13.
+// Created by antymistor on 2023/6/13.
 //
 
 #ifndef CVTEXTREADER_EEAUDIODECODER_H

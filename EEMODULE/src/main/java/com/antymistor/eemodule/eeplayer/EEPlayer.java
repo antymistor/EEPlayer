@@ -4,9 +4,9 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 import com.antymistor.eemodule.nativeport.EENativePort;
 /**
- * Created by aizhiqiang on 2023/6/19
+ * Created by antymistor on 2023/6/19
  *
- * @author aizhiqiang@bytedance.com
+ * @author azq2018@zju.edu.cn.com
  */
 public class EEPlayer {
     public enum EEPlayerCallBackType{

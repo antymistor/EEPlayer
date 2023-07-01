@@ -1,4 +1,4 @@
-prefix=/Users/bytedance/Documents/WorkSpace/fdk-aac-2.0.2/FDKAAC-android-build/armv7-a
+prefix=/Users/antymistor/Documents/WorkSpace/fdk-aac-2.0.2/FDKAAC-android-build/armv7-a
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

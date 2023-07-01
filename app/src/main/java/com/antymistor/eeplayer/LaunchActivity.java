@@ -12,8 +12,8 @@ import java.io.File;
 import java.util.Objects;
 
 /**
- * Created by aizhiqiang on 2023/6/22
- * @author aizhiqiang@bytedance.com
+ * Created by antymistor on 2023/6/22
+ * @author azq2018@zju.edu.cn.com
  */
 public class LaunchActivity extends AppCompatActivity {
 

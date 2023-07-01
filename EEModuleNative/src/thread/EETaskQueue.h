@@ -1,5 +1,5 @@
 //
-// Created by ByteDance on 2023/6/16.
+// Created by antymistor on 2023/6/16.
 //
 
 #ifndef CVTEXTREADER_EETASKQUEUE_H

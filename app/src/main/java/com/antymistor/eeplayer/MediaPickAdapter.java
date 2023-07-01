@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 /**
- * Created by aizhiqiang on 2023/6/23
+ * Created by antymistor on 2023/6/23
  *
- * @author aizhiqiang@bytedance.com
+ * @author azq2018@zju.edu.cn.com
  */
 public class MediaPickAdapter  extends RecyclerView.Adapter<MediaPickAdapter.ViewHolder>{
     private final ArrayList<Bitmap> mImageList;

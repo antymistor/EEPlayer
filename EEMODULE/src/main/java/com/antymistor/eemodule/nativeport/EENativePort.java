@@ -6,9 +6,9 @@ import com.antymistor.eemodule.eeplayer.EEPlayerBuildParam;
 import com.antymistor.eemodule.eeplayer.EEPlayer;
 
 /**
- * Created by aizhiqiang on 2023/5/26
+ * Created by antymistor on 2023/5/26
  *
- * @author aizhiqiang@bytedance.com
+ * @author azq2018@zju.edu.cn.com
  */
 @Keep
 public class EENativePort {

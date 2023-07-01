@@ -1,5 +1,5 @@
 //
-// Created by ByteDance on 2023/6/10.
+// Created by antymistor on 2023/6/10.
 //
 
 #ifndef CVTEXTREADER_EERENDER_H

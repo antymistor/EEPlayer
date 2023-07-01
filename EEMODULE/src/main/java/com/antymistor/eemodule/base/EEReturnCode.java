@@ -1,9 +1,9 @@
 package com.antymistor.eemodule.base;
 
 /**
- * Created by aizhiqiang on 2023/6/4
+ * Created by antymistor on 2023/6/4
  *
- * @author aizhiqiang@bytedance.com
+ * @author azq2018@zju.edu.cn.com
  */
 public class EEReturnCode {
     public static final int EE_OK         = 0;

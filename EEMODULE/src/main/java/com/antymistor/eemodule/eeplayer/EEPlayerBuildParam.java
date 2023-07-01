@@ -2,9 +2,9 @@ package com.antymistor.eemodule.eeplayer;
 import androidx.annotation.Keep;
 
 /**
- * Created by aizhiqiang on 2023/6/22
+ * Created by antymistor on 2023/6/22
  *
- * @author aizhiqiang@bytedance.com
+ * @author azq2018@zju.edu.cn.com
  */
 @Keep
 
