@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <SurfaceView
+        android:id="@+id/videoview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        >
+    </SurfaceView>
+    <TextView
+        android:id="@+id/time_horizontal"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        />
+    <TextView
+        android:id="@+id/time_vertical"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="-5dp"
+        android:gravity="end"
+        android:rotation="90"
+        android:textStyle="bold"
+        android:layout_width  ="wrap_content"
+        android:layout_height ="wrap_content"
+        android:textColor="@color/white"
+        />
+    <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:alpha="0.4">
+        <com.antymistor.eeplayer.utils.SeekbarAdvance
+            android:progressDrawable="@drawable/seekbar"
+            android:id="@+id/processbar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:splitTrack="false"
+            app:seekBarRotation="CW90" />
+    </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
+
+</FrameLayout>

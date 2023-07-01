@@ -1,0 +1,18 @@
+<resources>
+
+    <style name="Widget.Theme.EEPlayer.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="Widget.Theme.EEPlayer.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/black_overlay</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.EEPlayer.Fullscreen">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:windowBackground">@drawable/g0</item>
+    </style>
+</resources>
