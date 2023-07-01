@@ -4,12 +4,12 @@ message("start build")
 set(CMAKE_CXX_STANDARD 17)
 
 
-set(PATH_TO_JNI_LAYER ../EEModuleNative/jni)
-set(PATH_TO_EEMODULE ../EEModuleNative/src)
+set(PATH_TO_JNI_LAYER ${CMAKE_CURRENT_SOURCE_DIR}/../EEModuleNative/jni)
+set(PATH_TO_EEMODULE ${CMAKE_CURRENT_SOURCE_DIR}/../EEModuleNative/src)
 set(PATH_TO_EEMODULE_JNIENV ${PATH_TO_EEMODULE}/JNIEnv)
 
-include_directories(${PATH_TO_EEMODULE_JNIENV}/*.h)
-include_directories(${PATH_TO_JNI_LAYER}/*.h)
+include_directories(${PATH_TO_EEMODULE_JNIENV})
+include_directories(${PATH_TO_JNI_LAYER})
 
 file(GLOB FILES_JNI_LAYER ${PATH_TO_JNI_LAYER}/*.cpp)
 
