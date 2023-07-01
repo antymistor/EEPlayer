@@ -28,7 +28,7 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':EEMODULE')
+    implementation project(path: ':EEModule')
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'androidx.appcompat:appcompat:1.3.0'
