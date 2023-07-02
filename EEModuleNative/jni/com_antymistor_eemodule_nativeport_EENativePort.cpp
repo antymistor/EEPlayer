@@ -10,9 +10,23 @@
 #include "../src/JNIEnv/EEJNIEnv.h"
 #include "../src/basedefine/EECodeDefine.h"
 #include "../src/player/EEPlayer.h"
+#include "../src/shared/EEShared.h"
 
 #define LOG_TAG "JNI_INTERFACE"
 using POINTER = jlong;
+
+template<typename T>
+class SharedObjectHolder{
+public:
+    explicit SharedObjectHolder(std::shared_ptr<T> sp){
+        mSp = sp;
+    }
+    std::shared_ptr<T> getSp(){
+        return mSp;
+    }
+private:
+    std::shared_ptr<T> mSp = nullptr;
+};
 
 class JavaObjectHolder{
 public:
@@ -41,6 +55,22 @@ JNIEXPORT void JNICALL Java_com_antymistor_eemodule_nativeport_EENativePort_nati
         (JNIEnv *env, jclass clazz, jlong holder_pointer){
     if( 0 != holder_pointer){
         auto * p = (JavaObjectHolder *)holder_pointer;
+        delete p;
+    }
+}
+
+JNIEXPORT jlong JNICALL Java_com_antymistor_eemodule_nativeport_EENativePort_nativeCreateSharedObject
+        (JNIEnv *env, jclass clazz, jstring name){
+    const char *name_ = env->GetStringUTFChars(name, nullptr);
+    auto shared = std::make_shared<EE::EEShared>(name_);
+    auto holder = new SharedObjectHolder<EE::EEShared>(shared);
+    env->ReleaseStringUTFChars(name, name_);
+    return (POINTER) holder;
+}
+JNIEXPORT void JNICALL Java_com_antymistor_eemodule_nativeport_EENativePort_nativeReleaseSharedObject
+        (JNIEnv *env, jclass clazz, jlong shared_obj){
+    if( 0 != shared_obj){
+        auto * p = (SharedObjectHolder<EE::EEShared> *)shared_obj;
         delete p;
     }
 }
@@ -172,6 +202,7 @@ JNIEXPORT void JNICALL Java_com_antymistor_eemodule_nativeport_EENativePort_nati
         jfieldID videoDisplayRotation_p = env->GetFieldID(EEPlayerBuildParam, "videoDisplayRotation","I");
         jfieldID startPlayTime_p = env->GetFieldID(EEPlayerBuildParam, "startPlayTime", "J");
         jfieldID extraFlag_p = env->GetFieldID(EEPlayerBuildParam, "extraFlag", "I");
+        jfieldID sharedObj_p = env->GetFieldID(EEPlayerBuildParam, "sharedObj","Lcom/antymistor/eemodule/sharedObj/EESharedObj;");
 
 
         jclass     jclazz_player    = nullptr;
@@ -181,6 +212,17 @@ JNIEXPORT void JNICALL Java_com_antymistor_eemodule_nativeport_EENativePort_nati
             holderp = (JavaObjectHolder *)playerholder;
             jclazz_player    = env->GetObjectClass(holderp->getObj());
             jmethod_callback = env->GetMethodID(jclazz_player, "onInfo", "(IFF)V");
+        }
+
+        std::shared_ptr<EE::EEShared> shared = nullptr;
+        jobject shared_obj = env->GetObjectField(param, sharedObj_p);
+        if(shared_obj != nullptr){
+            jclass jclazz_sharedObj = env->GetObjectClass(shared_obj);
+            jmethodID jmethod_getNativeHandle = env->GetMethodID(jclazz_sharedObj, "getNativeHandle","()J");
+            auto shared_pointer = env->CallLongMethod(shared_obj, jmethod_getNativeHandle);
+            if(shared_pointer != 0){
+                shared = ((SharedObjectHolder<EE::EEShared> *) shared_pointer)->getSp();
+            }
         }
 
         EE::EEPlayer::EEPlayerBuildParam nativeparam = {
@@ -199,6 +241,7 @@ JNIEXPORT void JNICALL Java_com_antymistor_eemodule_nativeport_EENativePort_nati
                                 EE::EEJNIEnv jnienv(&env_);
                                 env_->CallVoidMethod(holderp->getObj(), jmethod_callback, (int)type, (float)value1, (float)value2);
                             },
+                .sharedObj = shared,
         };
         p->build(nativeparam);
     }

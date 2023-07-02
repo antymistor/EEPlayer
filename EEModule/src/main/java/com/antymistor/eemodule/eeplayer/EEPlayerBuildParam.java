@@ -1,5 +1,6 @@
 package com.antymistor.eemodule.eeplayer;
 import androidx.annotation.Keep;
+import com.antymistor.eemodule.sharedObj.EESharedObj;
 
 /**
  * Created by antymistor on 2023/6/22
@@ -18,6 +19,7 @@ public class EEPlayerBuildParam {
     public int videoRenderFps      = 0;
     public int videoDisplayFitMode = Fill_in_Fit;
     public int videoDisplayRotation= 0;
+    public EESharedObj sharedObj = null;
     // both
     public long startPlayTime      = 0;
     public int  extraFlag         = 0;

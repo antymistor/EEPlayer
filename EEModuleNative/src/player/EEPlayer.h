@@ -6,6 +6,7 @@
 #define CVTEXTREADER_EEPLAYER_H
 #include <memory>
 #include <functional>
+#include "../shared/EEShared.h"
 
 namespace EE {
     class EEPlayer {
@@ -39,6 +40,7 @@ namespace EE {
                   int64_t startPlayTime       = 0;
                   int32_t extraFlag           = 0;
                   std::function<void(const EEPlayerCallBackType& type, const float& value1, const float &value2)> callback= nullptr;
+                  std::shared_ptr<EEShared> sharedObj = nullptr;
               };
 
               struct EEPlayerMediaInfo {

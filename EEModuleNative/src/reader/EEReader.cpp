@@ -14,8 +14,8 @@ namespace EE {
         EEReaderUpdateParam             mUpdateParam;
         EEReaderBuildParam              mBuildParam;
         EEMediaInfo                     mMediainfo;
-        std::shared_ptr<EEDemuxer>      mDemuxer = nullptr;
-        std::shared_ptr<EEDecoder>      mDecoder = nullptr;
+        std::unique_ptr<EEDemuxer>      mDemuxer = nullptr;
+        std::unique_ptr<EEDecoder>      mDecoder = nullptr;
         EEList<std::shared_ptr<EEFrame>> mFrameList;
         std::thread* worker = nullptr;
         bool mIsStop = false;
@@ -23,7 +23,7 @@ namespace EE {
     };
 
     EEReader::EEReader() : mMembers(std::make_unique<EEVideoReaderMembers>()){
-        mMembers->mDemuxer = std::make_shared<EEDemuxer>();
+        mMembers->mDemuxer = std::make_unique<EEDemuxer>();
     }
 
     EEReader::~EEReader() {
@@ -45,15 +45,18 @@ namespace EE {
         mMembers->mDecoder = nullptr;
         if(strcmp(mMembers->mMediainfo.baseinfo.mineType, "") != 0){
             if(mMembers->mUpdateParam.type == VideoType){
-                mMembers->mDecoder = std::make_shared<EEVideoDecoder>();
+                mMembers->mDecoder = std::make_unique<EEVideoDecoder>();
             }else if(mMembers->mUpdateParam.type == AudioType){
-                mMembers->mDecoder = std::make_shared<EEAudioDecoder>();
+                mMembers->mDecoder = std::make_unique<EEAudioDecoder>();
             }
         }
         if(mMembers->mDecoder == nullptr){
             return EE_FAIL;
         }
-        mMembers->mDecoder->build({mMembers->mMediainfo , mMembers->mBuildParam.maxVideoFrameSize});
+        mMembers->mDecoder->build({mMembers->mMediainfo ,
+                                          mMembers->mBuildParam.maxVideoFrameSize,
+                                          param.sharedGLContext,
+                                          param.sharedTextureAllocator});
         return EE_OK;
     }
     EESize  EEReader::getFrameSize(){

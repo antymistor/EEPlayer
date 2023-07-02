@@ -21,6 +21,7 @@ import com.antymistor.eemodule.eeplayer.EEPlayer;
 import com.antymistor.eemodule.eeplayer.EEPlayerBuildParam;
 import com.antymistor.eemodule.eeplayer.EEPlayerSpConfig;
 import com.antymistor.eemodule.nativeport.EENativePort;
+import com.antymistor.eemodule.sharedObj.EESharedObj;
 import com.antymistor.eeplayer.utils.SeekbarAdvance;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -56,7 +57,8 @@ public class VideoPlayActivity extends AppCompatActivity {
     private static final float minScale = 0.1f;
 
     private SurfaceView displayView;
-    private EEPlayer mPlayer;
+    private EEPlayer mPlayer = null;
+    private EESharedObj mSharedObj = null;
     private TextView time_horizontal;
     private TextView time_vertical;
     private SeekbarAdvance mProgressbar = null;
@@ -129,7 +131,7 @@ public class VideoPlayActivity extends AppCompatActivity {
                                 statusinfo_.progress = 0;
                             }
                         }
-                        Log.e("antymistor","read json success" + String.valueOf(statusinfo_.progress) );
+                        Log.i("antymistor","read json success" + String.valueOf(statusinfo_.progress) );
                     }else{
                         Log.e("antymistor","read json fail");
                     }
@@ -255,6 +257,10 @@ public class VideoPlayActivity extends AppCompatActivity {
             mPlayer.destroy();
             mPlayer = null;
         }
+        if(mSharedObj != null){
+            mSharedObj.destroy();
+            mSharedObj = null;
+        }
     }
 
 
@@ -281,6 +287,8 @@ public class VideoPlayActivity extends AppCompatActivity {
         }
         //build palyer
         displayView =  findViewById(R.id.videoview);
+        mSharedObj = new EESharedObj();
+        mSharedObj.create("EEShared");
         mPlayer = new EEPlayer();
         mPlayer.create();
         mPlayer.updateFilePath(statusinfo_.currentFilePathDy);
@@ -295,6 +303,7 @@ public class VideoPlayActivity extends AppCompatActivity {
                          | EEPlayerSpConfig.ENABLE_HIGH_Q_DISPLAY
                           ;
         param.startPlayTime = Math.min(statusinfo_.progress * 1000,  mVideoinfo.videoDuration - 500);
+        param.sharedObj = mSharedObj;
         mPlayer.setListener(new EEPlayer.EEPlayerListener() {
             @Override
             public void onInfo(EEPlayer.EEPlayerCallBackType type, float value1, float value2) {

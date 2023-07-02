@@ -4,17 +4,16 @@
 
 #include "EEVideoOutput.h"
 #include "../render/EETextureCopyRender.h"
-#include "../gl/EEGLContext.h"
 #include "../thread/EETaskQueue.h"
 #include "../utils/EECommonUtils.h"
 namespace EE{
     struct EEVideoOutput::EEVideoOutputMembers{
-        std::shared_ptr<EETextureCopyRender> mRender = nullptr;
+        std::unique_ptr<EETextureCopyRender> mRender = nullptr;
         std::shared_ptr<EETextureCopyRender::EETextureCopyRenderParam> mRenderParam = nullptr;
-        std::shared_ptr<EETextureCopyRender>  mRender_blurr = nullptr;
+        std::unique_ptr<EETextureCopyRender>  mRender_blurr = nullptr;
         std::shared_ptr<EETextureCopyRender::EETextureCopyRenderParam>   mRenderParam_blurr = nullptr;
         std::shared_ptr<EEGLContext> mGLContext = nullptr;
-        std::shared_ptr<EETaskQueue> mTaskQueue = nullptr;
+        std::unique_ptr<EETaskQueue> mTaskQueue = nullptr;
         std::function<std::shared_ptr<EEFrame>()> mPullFrameFun = nullptr;
         int fps = 30;
         EEViewFillMode fillmode = IN_CENTER_BY_FIT;
@@ -64,7 +63,7 @@ namespace EE{
             mMembers->mRenderParam->rotation = (int)mMembers->displayRotation;
             mMembers->mRenderParam->destRenderArea = {_windowsize.width, _windowsize.height};
             //build Render
-            mMembers->mRender = std::make_shared<EETextureCopyRender>();
+            mMembers->mRender = std::make_unique<EETextureCopyRender>();
             mMembers->mRender->build(mMembers->mRenderParam);
 
             if(mMembers->enableBlurrBackGround){
@@ -78,7 +77,7 @@ namespace EE{
                 mMembers->mRenderParam_blurr->rotation = (int)mMembers->displayRotation;
                 mMembers->mRenderParam_blurr->destRenderArea = {_windowsize.width, _windowsize.height};
                 //build blurr
-                mMembers->mRender_blurr = std::make_shared<EETextureCopyRender>();
+                mMembers->mRender_blurr = std::make_unique<EETextureCopyRender>();
                 mMembers->mRender_blurr->build(mMembers->mRenderParam_blurr);
             }
         }, true));
@@ -96,11 +95,12 @@ namespace EE{
         mMembers->enableBlurrBackGround = (mMembers->extraFlag & ENABLE_BLURR_BACKGROUND_DISPLAY) == ENABLE_BLURR_BACKGROUND_DISPLAY;
         mMembers->enableHQDisplay = (mMembers->extraFlag & ENABLE_HIGH_Q_DISPLAY) == ENABLE_HIGH_Q_DISPLAY;
         mMembers->displayRotation = param.videoDisplayRotation;
-        mMembers->mTaskQueue = std::make_shared<EETaskQueue>(EECommonUtils::createGlobalName("VidDisplay"));
-        mMembers->mTaskQueue->run(EETask([&](){
+        mMembers->mTaskQueue = std::make_unique<EETaskQueue>(EECommonUtils::createGlobalName("VidDisplay"));
+        mMembers->mTaskQueue->run(EETask([&, sharedContext = param.sharedGlContext](){
             //build glcontext
             mMembers->mGLContext = std::make_shared<EEGLContext>();
-            mMembers->mGLContext->initContext(nullptr , true);
+            mMembers->mGLContext->initContext(sharedContext == nullptr? nullptr : sharedContext->getEGLContext() ,
+                                              true);
         }, true));
         return EE_OK;
     }

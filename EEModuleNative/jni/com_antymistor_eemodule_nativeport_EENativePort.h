@@ -45,6 +45,11 @@ JNIEXPORT jlong JNICALL Java_com_antymistor_eemodule_nativeport_EENativePort_nat
 JNIEXPORT void JNICALL Java_com_antymistor_eemodule_nativeport_EENativePort_nativeReleaseJavaObjectHolder
         (JNIEnv *env, jclass clazz, jlong holder_pointer);
 
+JNIEXPORT jlong JNICALL Java_com_antymistor_eemodule_nativeport_EENativePort_nativeCreateSharedObject
+        (JNIEnv *env, jclass clazz, jstring name);
+JNIEXPORT void JNICALL Java_com_antymistor_eemodule_nativeport_EENativePort_nativeReleaseSharedObject
+        (JNIEnv *env, jclass clazz, jlong shared_obj);
+
 #ifdef __cplusplus
 }
 #endif

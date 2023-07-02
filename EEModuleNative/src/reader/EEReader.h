@@ -6,6 +6,7 @@
 #define CVTEXTREADER_EEREADER_H
 
 #include <string>
+#include "../gl/EEGLContext.h"
 #include "../basedefine/EECodeDefine.h"
 #include "../gl/EETexture.h"
 #include "decoder/EEVideoDecoder.h"
@@ -17,16 +18,17 @@ namespace EE {
             const char* srcFilePath;
             EEStreamType type = NoType;
             int maxCacheSize = 5;
-            EEReaderUpdateParam (const char* path = nullptr, EEStreamType type_ = VideoType){
-                srcFilePath = path;
-                type = type_;
-            }
+            EEReaderUpdateParam (const char* path = nullptr, EEStreamType type_ = VideoType) :
+                    srcFilePath(path), type(type_){}
         };
         struct EEReaderBuildParam{
             EESize maxVideoFrameSize = {0,0};
-            EEReaderBuildParam ( const EESize& size = {0, 0}){
-                maxVideoFrameSize = size;
-            }
+            std::shared_ptr<EEGLContext> sharedGLContext = nullptr;
+            std::shared_ptr<EETextureAllocator> sharedTextureAllocator = nullptr;
+            EEReaderBuildParam ( const EESize& size = {0, 0},
+                                 const std::shared_ptr<EEGLContext>& glContext = nullptr,
+                                 const std::shared_ptr<EETextureAllocator>& textureAllocator = nullptr) :
+                    maxVideoFrameSize(size), sharedGLContext(glContext),sharedTextureAllocator(textureAllocator) {}
         };
         EEReader();
         ~EEReader();

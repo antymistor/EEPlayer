@@ -9,7 +9,9 @@
 #include "../utils/EETimeUtils.h"
 #include "../thread/EETaskQueue.h"
 #include "../utils/EECommonUtils.h"
+#include "../gl/EEGLContext.h"
 #include <mutex>
+
 #define LOG_TAG "EEPlayer"
 #define TCR 1000                //Timestamp Conversion Ratio
 #define AVSyncTolerance  50    //unit ms
@@ -18,11 +20,15 @@
 #define SKIP_FRAMES_TOLERANCE_TIME               1000000     //1s
 #define SKIP_FRAMES_TOLERANCE_EXEMPTION_DIFFTIME 10000000    //10s
 namespace EE {
+        extern std::shared_ptr<EEGLContext> getSharedGLContext(const std::shared_ptr<EEShared>& sObj);
+        extern std::shared_ptr<EETextureAllocator> getSharedTextureAllocator(const std::shared_ptr<EEShared>& sObj);
+        extern std::shared_ptr<EETaskQueue> getSharedTaskQueue(const std::shared_ptr<EEShared>& sObj);
+
         struct EEPlayer::EEPlayerMember{
              /**
              *  base members
              */
-             const char* filepath;
+             const char* filepath{};
              EEMediaInfo videoInfo;
              EEMediaInfo audioInfo;
              std::shared_ptr<EETaskQueue> mCallbackTaskQueue = nullptr;
@@ -43,7 +49,7 @@ namespace EE {
              float mVideoDisplayScale = 1.0f;
              int32_t extra_flag = 0x00;
              std::function<void(const EEPlayerCallBackType& type, const float& value1, const float &value2)> mCallback = nullptr;
-
+             std::shared_ptr<EEShared> sharedObj = nullptr;
              /**
               * surface info
               */
@@ -70,7 +76,13 @@ namespace EE {
             mMembers->mVideoReader->stop();
             mMembers->mAudioReader->stop();
             stop();
-            EETextureAllocator::getSharedInstance()->clearAll();
+            mMembers->mVideoReader = nullptr;
+            mMembers->mVideoReader = nullptr;
+            mMembers->mVideoOutput = nullptr;
+            mMembers->mAudioOutput = nullptr;
+            if(mMembers->sharedObj == nullptr){
+                EETextureAllocator::getSharedInstance()->clearAll();
+            }
         }
         void EEPlayer::updateFilePath(const char* path){
             mMembers->filepath = path;
@@ -111,8 +123,11 @@ namespace EE {
             mMembers->seekPosition =  mMembers->startPts * TCR;
             mMembers->extra_flag = param.extraFlag;
             mMembers->mCallback = param.callback;
+            mMembers->sharedObj = param.sharedObj;
             //build reader
-            mMembers->mVideoReader->build({mMembers->maxVideoRenderSize});
+            mMembers->mVideoReader->build({mMembers->maxVideoRenderSize,
+                                                 getSharedGLContext(mMembers->sharedObj),
+                                                 getSharedTextureAllocator(mMembers->sharedObj)});
             mMembers->mVideoReader->startFrom(mMembers->startPts * TCR, mMembers->startPts == 0 ? -1 : 0);
             int64_t realvideoSeekTime =  mMembers->mVideoReader->getSeekTime();
             mMembers->mAudioReader->build({});
@@ -129,6 +144,7 @@ namespace EE {
                     .srcSize  = mMembers->mFrameSize,
                     .fps      = mMembers->fps ,
                     .videoDisplayRotation = mMembers->mVideoDisplayRotation,
+                    .sharedGlContext = getSharedGLContext(mMembers->sharedObj),
                     .extraFlag =  mMembers->extra_flag,
                     .pullFun  =  [&](){
                         if(mMembers->mVideoFrameCount == SKIP_FRAMES_SYN_AT_SEEK + 1){

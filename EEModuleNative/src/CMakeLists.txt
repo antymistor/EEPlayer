@@ -18,6 +18,7 @@ set(PATH_TO_THREAD ${CMAKE_CURRENT_SOURCE_DIR}/thread)
 set(PATH_TO_RENDER ${CMAKE_CURRENT_SOURCE_DIR}/render)
 set(PATH_TO_OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/output)
 set(PATH_TO_PLAYER ${CMAKE_CURRENT_SOURCE_DIR}/player)
+set(PATH_TO_SHARED ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
 #set include
 include_directories(./empty.h)
@@ -37,6 +38,7 @@ include_directories(${PATH_TO_THREAD})
 include_directories(${PATH_TO_RENDER})
 include_directories(${PATH_TO_OUTPUT})
 include_directories(${PATH_TO_PLAYER})
+include_directories(${PATH_TO_SHARED})
 
 #add dynmic library
 #add_library(libx264 SHARED IMPORTED)
@@ -72,6 +74,7 @@ file(GLOB FILES_RENDER ${PATH_TO_RENDER}/*.cpp)
 file(GLOB FILES_BASE   ${PATH_TO_BASEDEFINE}/*.cpp)
 file(GLOB FILES_OUTPUT ${PATH_TO_OUTPUT}/*.cpp)
 file(GLOB FILES_PLAYER ${PATH_TO_PLAYER}/*.cpp)
+file(GLOB FILES_SHARED ${PATH_TO_SHARED}/*.cpp)
 
 add_library(native-src
             SHARED
@@ -87,7 +90,9 @@ add_library(native-src
            ${FILES_RENDER}
            ${FILES_BASE}
            ${FILES_OUTPUT}
-           ${FILES_PLAYER})
+           ${FILES_PLAYER}
+           ${FILES_SHARED}
+         )
 
 target_link_libraries(
         native-src

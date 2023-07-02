@@ -5,6 +5,7 @@
 #ifndef CVTEXTREADER_EEOUTPUT_H
 #define CVTEXTREADER_EEOUTPUT_H
 
+#include "../gl/EEGLContext.h"
 #include "../basedefine/EECodeDefine.h"
 #include "../reader/EEMediaDefine.h"
 #include "EEOutputDefine.h"
@@ -20,6 +21,7 @@ namespace EE {
             EESize srcSize = {0,0};
             int fps;
             int64_t videoDisplayRotation = 0;
+            std::shared_ptr<EEGLContext> sharedGlContext;
             //ForBoth
             int32_t extraFlag = 0x00;
             std::function<std::shared_ptr<EEFrame>()> pullFun;

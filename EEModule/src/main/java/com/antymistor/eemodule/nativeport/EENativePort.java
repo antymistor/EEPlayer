@@ -20,6 +20,8 @@ public class EENativePort {
 
     public static native long nativeCreateJavaObjectHolder(Object obj);
     public static native void nativeReleaseJavaObjectHolder(long holderPointer);
+    public static native long  nativeCreateSharedObject(String name);
+    public static native void  nativeReleaseSharedObject(long sharedObj);
 
     public static native void  nativeLoadJNI();
     public static native long  nativeCreateEEPlayer();

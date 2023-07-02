@@ -13,7 +13,7 @@ namespace EE {
         EGLDisplay m_display = EGL_NO_DISPLAY;
         EGLSurface m_surface = EGL_NO_SURFACE;
         EGLConfig  m_config = nullptr;
-        std::shared_ptr<EEFrameBufferAllocator> mFrameBufferAllocator = nullptr;
+        std::unique_ptr<EEFrameBufferAllocator> mFrameBufferAllocator = nullptr;
     };
 
     std::shared_ptr<EEGLContext> EEGLContext::globalContext = nullptr;
@@ -114,7 +114,7 @@ namespace EE {
 
     std::shared_ptr<EEFrameBuffer> EEGLContext::getEEFrameBuffer(){
         if(upContext->mFrameBufferAllocator == nullptr){
-            upContext->mFrameBufferAllocator = std::make_shared<EEFrameBufferAllocator>();
+            upContext->mFrameBufferAllocator = std::make_unique<EEFrameBufferAllocator>();
         }
         return  upContext->mFrameBufferAllocator->allocateEEFrameBuffer();
     }

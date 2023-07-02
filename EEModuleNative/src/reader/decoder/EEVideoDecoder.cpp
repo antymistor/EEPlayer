@@ -6,19 +6,19 @@
 #include "EEMediaCodecDecoder.h"
 #include "../../utils/EECommonUtils.h"
 #include "../../thread/EETaskQueue.h"
-#include "../../gl/EEGLContext.h"
 #include "../../render/EETextureCopyRender.h"
 #define LOG_TAG "EEVideoDecoder"
 namespace EE{
     struct EEVideoDecoder::EEVideoDecoderMembers{
         EESize destSize= {0,0};
         EEMediaInfoBase videoinfo;
-        std::shared_ptr<EEMediaCodecDecoder> mDecoder = nullptr;
-        std::shared_ptr<EETextureCopyRender> mRender = nullptr;
+        std::unique_ptr<EEMediaCodecDecoder> mDecoder = nullptr;
+        std::unique_ptr<EETextureCopyRender> mRender = nullptr;
         std::shared_ptr<EETextureCopyRender::EETextureCopyRenderParam> mRenderParam = nullptr;
         std::shared_ptr<EEGLContext> mGLContext = nullptr;
-        std::shared_ptr<EETaskQueue> mTaskQueue = nullptr;
+        std::unique_ptr<EETaskQueue> mTaskQueue = nullptr;
         std::shared_ptr<EETexture>   mOESTexture = nullptr;
+        std::shared_ptr<EETextureAllocator> mSharedTextureAllocator = nullptr;
     };
     EEVideoDecoder::EEVideoDecoder() : mMembers(std::make_unique<EEVideoDecoderMembers>()){}
     EEVideoDecoder::~EEVideoDecoder(){
@@ -31,17 +31,19 @@ namespace EE{
         EEVideoDecoder::release();
         //copy info
         mMembers->videoinfo = param.mediainfo.baseinfo;
+        mMembers->mSharedTextureAllocator = param.sharedTextureAllocator;
         //handle size
         mMembers->destSize = ( mMembers->videoinfo.rotate == 90 ||  mMembers->videoinfo.rotate == 270) ?
                              EESize(mMembers->videoinfo.videoSrcSize.height, mMembers->videoinfo.videoSrcSize.width) :
                              mMembers->videoinfo.videoSrcSize;
         EECommonUtils::resize(param.maxsize, mMembers->destSize);
         //build thread
-        mMembers->mTaskQueue = std::make_shared<EETaskQueue>(EECommonUtils::createGlobalName("VidDecode"));
-        mMembers->mTaskQueue->run(EETask([&, buffer = param.mediainfo.extradata_0](){
+        mMembers->mTaskQueue = std::make_unique<EETaskQueue>(EECommonUtils::createGlobalName("VidDecode"));
+        mMembers->mTaskQueue->run(EETask([&, buffer = param.mediainfo.extradata_0, sharedContext = param.sharedGLContext](){
             //build glcontext
             mMembers->mGLContext = std::make_shared<EEGLContext>();
-            mMembers->mGLContext->initContext(nullptr , true);
+            mMembers->mGLContext->initContext(sharedContext == nullptr? nullptr : sharedContext->getEGLContext() ,
+                                              true);
             mMembers->mGLContext->initSurface(nullptr, PIXEL_BUFFER_MODE);
             mMembers->mGLContext->makeCurrent();
 
@@ -49,7 +51,11 @@ namespace EE{
             EE::EEGLUtils::TextureBuildParam texbuildparam;
             texbuildparam.textype = GL_TEXTURE_EXTERNAL_OES;
             texbuildparam.size = mMembers->videoinfo.videoSrcSize;
-            mMembers->mOESTexture = EETextureAllocator::getSharedInstance()->allocateEETexture(texbuildparam);
+            if( mMembers->mSharedTextureAllocator != nullptr){
+                mMembers->mOESTexture = mMembers->mSharedTextureAllocator->allocateEETexture(texbuildparam);
+            }else{
+                mMembers->mOESTexture = EETextureAllocator::getSharedInstance()->allocateEETexture(texbuildparam);
+            }
             mMembers->mOESTexture ->unRegisterFromAllocator();
 
             // build Decoder
@@ -59,7 +65,7 @@ namespace EE{
             param_.specConfig_0 = buffer->data;
             param_.specConfig_0_len = buffer->size;
             param_.externalOESTexture = mMembers->mOESTexture;
-            mMembers->mDecoder = std::make_shared<EEMediaCodecDecoder>();
+            mMembers->mDecoder = std::make_unique<EEMediaCodecDecoder>();
             mMembers->mDecoder->init(param_);
 
             //build RenderParam
@@ -69,7 +75,7 @@ namespace EE{
             mMembers->mRenderParam->customFragshader = baseOESFragmentCode;
 
             //build Render
-            mMembers->mRender = std::make_shared<EETextureCopyRender>();
+            mMembers->mRender = std::make_unique<EETextureCopyRender>();
             mMembers->mRender->build(mMembers->mRenderParam);
         }));
         return EE_OK;
@@ -93,8 +99,12 @@ namespace EE{
             if(param.returnCode != EE_OK || skipRender){
                 return ;
             }
-            std::shared_ptr<EETexture> destTexture = EETextureAllocator::getSharedInstance()->allocateEETexture(
-                    mMembers->destSize);
+            std::shared_ptr<EETexture> destTexture = nullptr;
+            if( mMembers->mSharedTextureAllocator != nullptr){
+                destTexture = mMembers->mSharedTextureAllocator->allocateEETexture( mMembers->destSize);
+            }else{
+                destTexture = EETextureAllocator::getSharedInstance()->allocateEETexture( mMembers->destSize);
+            }
             auto fbo = mMembers->mGLContext->getEEFrameBuffer();
             destTexture->excuteBind(true);
             fbo->bindEETexture(destTexture);
