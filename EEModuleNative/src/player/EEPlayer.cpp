@@ -77,7 +77,7 @@ namespace EE {
             mMembers->mAudioReader->stop();
             stop();
             mMembers->mVideoReader = nullptr;
-            mMembers->mVideoReader = nullptr;
+            mMembers->mAudioReader = nullptr;
             mMembers->mVideoOutput = nullptr;
             mMembers->mAudioOutput = nullptr;
             if(mMembers->sharedObj == nullptr){

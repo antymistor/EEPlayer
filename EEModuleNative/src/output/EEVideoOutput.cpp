@@ -174,7 +174,9 @@ namespace EE{
         if(mMembers->mTaskQueue){
             mMembers->mTaskQueue->run(EETask([&](){
                 mMembers->mRender = nullptr;
+                mMembers->mRender_blurr = nullptr;
                 mMembers->mRenderParam = nullptr;
+                mMembers->mRenderParam_blurr = nullptr;
                 mMembers->mGLContext = nullptr;
             }));
         }
